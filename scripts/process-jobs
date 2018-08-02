@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+require 'delayed_job_sequel'
+
+Sequel.connect(ENV.fetch('DB'))
+::Delayed::Worker.backend = :sequel
+
+$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
+require 'newsletter/job' # required so that the job can be deserialized
+
+require 'delayed/command'
+Delayed::Command.new(ARGV).daemonize
